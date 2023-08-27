@@ -6,6 +6,7 @@ import com.alex788.videos.exception.NoVideoByNameException;
 import com.alex788.videos.exception.ParallelLoadLimitExceededException;
 import com.alex788.videos.exception.VideoWithSameNameAlreadyExistsException;
 import com.alex788.videos.repository.VideoRepository;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@RequiredArgsConstructor
 public class VideoService {
 
     public static final int PARALLEL_LOAD_LIMIT = 2;
@@ -21,10 +23,6 @@ public class VideoService {
     private final Set<VideoInfo> loadingVideoInfos = ConcurrentHashMap.newKeySet();
 
     private final VideoRepository videoRepository;
-
-    public VideoService(VideoRepository videoRepository) {
-        this.videoRepository = videoRepository;
-    }
 
     /**
      * @return Empty {@link Future} to keep track of load completion.
