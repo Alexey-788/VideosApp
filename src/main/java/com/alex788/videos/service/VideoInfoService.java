@@ -1,6 +1,7 @@
 package com.alex788.videos.service;
 
 import com.alex788.videos.entity.VideoInfo;
+import com.alex788.videos.repository.VideoInfoRepository;
 
 import java.util.List;
 

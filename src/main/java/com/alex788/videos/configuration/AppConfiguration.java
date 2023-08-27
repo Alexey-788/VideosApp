@@ -1,6 +1,6 @@
 package com.alex788.videos.configuration;
 
-import com.alex788.videos.service.VideoRepository;
+import com.alex788.videos.repository.VideoRepository;
 import com.alex788.videos.repository.VideoRepositoryInMemory;
 import com.alex788.videos.service.VideoService;
 import org.springframework.context.annotation.Bean;

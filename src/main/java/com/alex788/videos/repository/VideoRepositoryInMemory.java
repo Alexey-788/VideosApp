@@ -1,7 +1,6 @@
 package com.alex788.videos.repository;
 
 import com.alex788.videos.entity.Video;
-import com.alex788.videos.service.VideoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class VideoRepositoryInMemory implements VideoRepository {
     @Override
     public Optional<Video> findByName(String name) {
         return videos.stream()
-                .filter(video -> name.equals(video.name()))
+                .filter(video -> name.equals(video.videoInfo().name()))
                 .findFirst();
     }
 }
