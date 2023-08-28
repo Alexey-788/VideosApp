@@ -3,12 +3,12 @@ package com.alex788.videos.loading_video_pool;
 import com.alex788.videos.entity.Video;
 
 import java.util.UUID;
-import java.util.concurrent.Future;
-import java.util.function.Consumer;
 
 public interface VideoLoadingPool {
 
-    Future<?> load(Video video, Consumer<Video> loading);
+    void add(Video video);
+
+    void remove(Video video);
 
     boolean canLoadParallelMore(UUID userId);
 

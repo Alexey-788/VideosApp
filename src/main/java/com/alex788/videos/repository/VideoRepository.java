@@ -4,13 +4,14 @@ import com.alex788.videos.entity.Video;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Future;
 
 /**
- * Video repository that displays only loaded videos. Videos that are in the process of being loaded are not returned.
+ * Video repository that displays loaded videos and videos currently loading.
  */
 public interface VideoRepository {
 
-    void save(Video video);
+    Future<?> save(Video video);
 
     Optional<Video> findByUserAndName(UUID userId, String videoName);
 
