@@ -1,4 +1,6 @@
 package com.alex788.videos.entity;
 
-public record Video(VideoInfo videoInfo) { // todo: invariants
+import java.util.UUID;
+
+public record Video(UUID userId, String name) { // todo: invariants
 }

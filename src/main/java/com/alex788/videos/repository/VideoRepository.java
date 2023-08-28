@@ -10,7 +10,9 @@ import java.util.UUID;
  */
 public interface VideoRepository {
 
-    void save(Video video, UUID userId);
+    void save(Video video);
 
-    Optional<Video> findByNameAndUser(String videoName, UUID userId);
+    Optional<Video> findByUserAndName(UUID userId, String videoName);
+
+    boolean doesUserHaveVideoWithName(UUID userId, String videoName);
 }
