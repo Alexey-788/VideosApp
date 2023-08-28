@@ -31,7 +31,7 @@ public class VideoService {
      */
     public Future<?> loadVideoParallel(Video video) throws ParallelLoadLimitExceededException, VideoWithSameNameAlreadyExistsException {
         synchronized (this) {
-            if (canLoadParallelMore()) {
+            if (!canLoadParallelMore()) {
                 throw new ParallelLoadLimitExceededException();
             } else if (!isVideoNameUnique(video.videoInfo().name())) {
                 throw new VideoWithSameNameAlreadyExistsException("Video with name '" + video.videoInfo().name() + "' already exists.");
@@ -53,7 +53,7 @@ public class VideoService {
     }
 
     private boolean canLoadParallelMore() {
-        return getHowMuchMoreCanLoadInParallel() == 0;
+        return getHowMuchMoreCanLoadInParallel() != 0;
     }
 
     public int getHowMuchMoreCanLoadInParallel() {
