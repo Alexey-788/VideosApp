@@ -1,2 +1,5 @@
-.idea/*
-target/*
+/.idea/*
+/target/*
+/tokens/StoredCredential
+/src/main/resources/credentials.json
+/downloading_videos/

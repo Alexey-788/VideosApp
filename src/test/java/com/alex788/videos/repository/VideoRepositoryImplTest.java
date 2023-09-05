@@ -6,6 +6,7 @@ import com.alex788.videos.entity.Video;
 import com.alex788.videos.exception.ParallelLoadLimitExceededException;
 import com.alex788.videos.exception.VideoWithSameNameAlreadyExistsException;
 import com.alex788.videos.loading_video_pool.VideoLoadingPool;
+import org.apache.http.impl.io.EmptyInputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,19 +40,19 @@ class VideoRepositoryImplTest {
 
     @Test
     void save_WithCorrectData_Ok() throws ExecutionException, InterruptedException {
-        Video video = new Video(new User().getId(), "video");
+        Video video = new Video(new User().getId(), "Video.mp4", null);
 
         Future<?> future = videoRepository.save(video);
 
         future.get();
         verify(videoLoadingPool, times(1)).add(video);
-        verify(storageDriveAdapter, times(1)).save(video, video.userId().toString());
+        verify(storageDriveAdapter, times(1)).save(any(), any(), any());
         verify(videoLoadingPool, times(1)).remove(video);
     }
 
     @Test
     void save_VideoLoadingPoolIsFull_ThrowsException() {
-        Video video = new Video(new User().getId(), "video");
+        Video video = new Video(new User().getId(), "Video.mp4", null);
         doReturn(false).when(videoLoadingPool).canLoadParallelMore(video.userId());
 
         Future<?> future = videoRepository.save(video);
@@ -62,8 +63,8 @@ class VideoRepositoryImplTest {
 
     @Test
     void save_VideoWithSameNameIsLoadingByCurrentUser_ThrowsException() {
-        Video video = new Video(new User().getId(), "video");
-        doReturn(true).when(videoLoadingPool).doesUserHaveVideoWithName(video.userId(), video.name());
+        Video video = new Video(new User().getId(), "Video.mp4", null);
+        doReturn(true).when(videoLoadingPool).doesUserHaveVideoWithName(any(), any());
 
         Future<?> future = videoRepository.save(video);
 
@@ -73,8 +74,8 @@ class VideoRepositoryImplTest {
 
     @Test
     void save_VideoWithSameNameAlreadySavedByCurrentUser_ThrowsException() {
-        Video video = new Video(new User().getId(), "video");
-        doReturn(true).when(storageDriveAdapter).hasVideo(video.name(), video.userId().toString());
+        Video video = new Video(new User().getId(), "Video.mp4", null);
+        doReturn(true).when(storageDriveAdapter).hasVideo(any(), any(), any());
 
         Future<?> future = videoRepository.save(video);
 
@@ -83,10 +84,10 @@ class VideoRepositoryImplTest {
     }
 
     @Test
-    void findByUserAndName_StorageDriveHasVideo_ReturnsVideo() {
+    void findByUserAndName_StorageDriveHasVideo_ReturnsVideoStream() {
         UUID userId = new User().getId();
-        String videoName = "video";
-        doReturn(new Video(userId, videoName)).when(storageDriveAdapter).getVideo(videoName, userId.toString());
+        String videoName = "Video.mp4";
+        doReturn(Optional.of(EmptyInputStream.nullInputStream())).when(storageDriveAdapter).getVideoStream(any(), any(), any());
 
         Optional<Video> videoOpt = videoRepository.findByUserAndName(userId, videoName);
 
@@ -96,8 +97,8 @@ class VideoRepositoryImplTest {
     @Test
     void findByUserAndName_StorageDriveHasNotVideo_ReturnsNothing() {
         UUID userId = new User().getId();
-        String videoName = "video";
-        doReturn(null).when(storageDriveAdapter).getVideo(videoName, userId.toString());
+        String videoName = "Video.mp4";
+        doReturn(Optional.empty()).when(storageDriveAdapter).getVideoStream(any(), any(), any());
 
         Optional<Video> videoOpt = videoRepository.findByUserAndName(userId, videoName);
 
@@ -107,8 +108,8 @@ class VideoRepositoryImplTest {
     @Test
     void doesUserHaveVideoWithName_ThereIsVideoInStorageDriveOrLoadingPool_True() {
         UUID userId = new User().getId();
-        String videoName = "video";
-        doReturn(true).when(storageDriveAdapter).hasVideo(videoName, userId.toString());
+        String videoName = "Video.mp4";
+        doReturn(true).when(storageDriveAdapter).hasVideo(any(), any(), any());
 
         assertThat(videoRepository.doesUserHaveVideoWithName(userId, videoName)).isTrue();
     }
@@ -116,7 +117,7 @@ class VideoRepositoryImplTest {
     @Test
     void doesUserHaveVideoWithName_ThereIsNoVideoInStorageDriveAndLoadingPool_True() {
         UUID userId = new User().getId();
-        String videoName = "video";
+        String videoName = "Video.mp4";
 
         assertThat(videoRepository.doesUserHaveVideoWithName(userId, videoName)).isFalse();
     }

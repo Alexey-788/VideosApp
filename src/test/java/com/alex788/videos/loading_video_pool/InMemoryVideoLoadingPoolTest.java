@@ -19,7 +19,7 @@ class InMemoryVideoLoadingPoolTest {
 
     @Test
     void canLoadParallelMore_onlyIfYouReachLimit_ReturnsFalse() {
-        Video video = new Video(new User().getId(), null);
+        Video video = new Video(new User().getId(), "Video.mp4", null);
 
         for (int i = 0; i < PARALLEL_LOAD_LIMIT; i++) {
             assertThat(inMemoryVideoLoadingPool.canLoadParallelMore(video.userId())).isTrue();
@@ -31,7 +31,7 @@ class InMemoryVideoLoadingPoolTest {
 
     @Test
     void doesUserHaveVideoWithName_onlyIfUserHave_ReturnsTrue() {
-        Video video = new Video(new User().getId(), "name");
+        Video video = new Video(new User().getId(), "Video.mp4", null);
 
         assertThat(inMemoryVideoLoadingPool.doesUserHaveVideoWithName(video.userId(), video.name())).isFalse();
         inMemoryVideoLoadingPool.add(video);
